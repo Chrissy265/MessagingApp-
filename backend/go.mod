@@ -1,5 +1,5 @@
-module main.go
+module realtime-chat-go-react
 
 go 1.15
 
-require github.com/gorilla/websocket v1.4.2
+require github.com/gorilla/websocket v1.4.0
