@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"realtime-chat-go-react/pkg/database"
+	"realtime-chat-go-react/pkg/repository"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -15,7 +15,7 @@ func returnAllUserChats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	i, _ := strconv.ParseInt(vars["id"], 10, 64)
-	chats, _ := database.ReturnAllUserChats(i)
+	chats, _ := repository.ReturnAllUserChats(i)
 	json.NewEncoder(w).Encode(chats)
 }
 
@@ -33,7 +33,7 @@ func createNewUserChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	database.CreateNewUserChat(userIds)
+	repository.CreateNewUserChat(userIds)
 }
 
 func deleteUserChat(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func getRecentMesages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	i, _ := strconv.ParseInt(vars["id"], 10, 64)
-	messages, _ := database.GetRecentMesages(i)
+	messages, _ := repository.GetRecentMesages(i)
 	json.NewEncoder(w).Encode(messages)
 }
 
@@ -53,7 +53,7 @@ func getRecentMesagesBefore(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	chatID, _ := strconv.ParseInt(vars["chatid"], 10, 64)
 	messageID, _ := strconv.ParseInt(vars["messageid"], 10, 64)
-	messages, _ := database.GetRecentMesagesBefore(chatID, messageID)
+	messages, _ := repository.GetRecentMesagesBefore(chatID, messageID)
 	json.NewEncoder(w).Encode(messages)
 }
 
@@ -78,7 +78,7 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(userID)
 	fmt.Println(body)
 	fmt.Println(message)
-	database.CreateNewMessage(chatID, userID, message)
+	repository.CreateNewMessage(chatID, userID, message)
 }
 
 func getChatPreferences(w http.ResponseWriter, r *http.Request) {
