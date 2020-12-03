@@ -184,31 +184,3 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 
 	return id, tx.Commit()
 }
-
-func getChatPreferences(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-func setChatPreferences(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-func getUserPreferences(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-func setUserPreferences(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
-func closeRows(rows *sql.Rows) {
-	if rows != nil {
-		rows.Close()
-	}
-}
-
-func closeStmt(stmt *sql.Stmt) {
-	if stmt != nil {
-		stmt.Close()
-	}
-}
