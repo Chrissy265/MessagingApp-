@@ -5,41 +5,46 @@ import (
 	"log"
 	"net/http"
 	"realtime-chat-go-react/pkg/apiServer"
+	redisConnection "realtime-chat-go-react/pkg/database/redis"
 	"realtime-chat-go-react/pkg/websocket"
+
+	redis "github.com/garyburd/redigo/redis"
 
 	"github.com/gorilla/mux"
 )
 
-func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("WebSocket Endpoint Hit")
-	conn, err := websocket.Upgrade(w, r)
+func serveWs(w http.ResponseWriter, r *http.Request) {
+	ws, err := websocket.Upgrade(w, r)
 	if err != nil {
-		fmt.Fprintf(w, "%+v\n", err)
+		fmt.Fprintf(w, "%+V\n", err)
 	}
-
-	client := &websocket.Client{
-		Conn: conn,
-		Pool: pool,
+	websocket.UserHub.NewUser(ws, 78)
+	for {
+		if _, err = redisConnection.RedisConn(); err != nil {
+			log.Printf("error on redis conn. %s\n", err)
+		}
 	}
-
-	pool.Register <- client
-	client.Read()
 }
 
 func setupRoutes() {
-	pool := websocket.NewPool()
-	go pool.Start()
-
 	myRouter := mux.NewRouter().StrictSlash(true)
 	apiServer.SetRoutes(myRouter)
 
-	myRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(pool, w, r)
-	})
+	myRouter.HandleFunc("/ws", serveWs)
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
 
 func main() {
 	fmt.Println("Distributed Chat App v0.01")
+	redisConn, err := redisConnection.RedisConn()
+	if err != nil {
+		panic(err)
+	}
+	defer redisConn.Close()
+
+	redisConnection.PubSubConnection = &redis.PubSubConn{Conn: redisConn}
+	defer redisConnection.PubSubConnection.Close()
+
+	go websocket.DeliverMessages()
 	setupRoutes()
 }

@@ -116,8 +116,6 @@ func GetRecentMesages(chatID int64) ([]model.Message, error) {
 }
 
 func GetRecentMesagesBefore(chatID int64, messageId int64) ([]model.Message, error) {
-	fmt.Println(chatID)
-	fmt.Println(messageId)
 	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM mydb.messages0 where idChat = ? AND createdTime <= (Select createdTime from mydb.messages0 where idMessages0 = ? limit 1) AND idMessages0 < ? order by createdTime desc, idMessages0 desc limit 50"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
@@ -183,4 +181,32 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 	id, _ := res.LastInsertId()
 
 	return id, tx.Commit()
+}
+
+func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, error) {
+	var sqlQuery = "SELECT idUser where idChat = ? and not idUser = ?"
+	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
+	defer closeStmt(stmt)
+	ids := []int64{}
+
+	if err != nil {
+		return ids, err
+	}
+
+	res, err := stmt.Query(chatId, messageSenderId)
+	defer closeRows(res)
+	if err != nil {
+		return ids, err
+	}
+
+	for res.Next() {
+		var userId int64
+		err := res.Scan(&userId)
+		if err != nil {
+			return ids, err
+		}
+		ids = append(ids, userId)
+
+	}
+	return ids, nil
 }
