@@ -7,6 +7,6 @@ import (
 var (
 	PubSubConnection *redis.PubSubConn
 	RedisConn        = func() (redis.Conn, error) {
-		return redis.Dial("tcp", ":6379")
+		return redis.Dial("tcp", ":6364")
 	}
 )

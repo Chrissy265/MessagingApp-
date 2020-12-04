@@ -37,14 +37,17 @@ func setupRoutes() {
 func main() {
 	fmt.Println("Distributed Chat App v0.01")
 	redisConn, err := redisConnection.RedisConn()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		defer redisConn.Close()
+
+		redisConnection.PubSubConnection = &redis.PubSubConn{Conn: redisConn}
+		defer redisConnection.PubSubConnection.Close()
+
+		go websocket.DeliverMessages()
+	} else {
+		fmt.Println("Could not start redis. Please make sure to run docker-compose up to start redis in docker container. Websocket functionality will not work")
+		fmt.Println(err)
 	}
-	defer redisConn.Close()
 
-	redisConnection.PubSubConnection = &redis.PubSubConn{Conn: redisConn}
-	defer redisConnection.PubSubConnection.Close()
-
-	go websocket.DeliverMessages()
 	setupRoutes()
 }

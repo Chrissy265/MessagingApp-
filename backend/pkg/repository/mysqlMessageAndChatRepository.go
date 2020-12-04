@@ -9,13 +9,21 @@ import (
 )
 
 func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
-	var sqlQuery = "SELECT chat.idChat, ucp.idUser, up.displayName, chat.createTime, chat.updateTime FROM userchatpreferences ucp join chat chat on chat.idChat = ucp.idChat join userpreferences up on ucp.idUser = up.idUser where chat.idChat in (Select idChat from userchatpreferences where idUser = ?)"
+	var sqlQuery = "SELECT chat.idChat, ucp.idUser, up.displayName, chat.createTime " +
+		"FROM userchatpreferences ucp " +
+		"join chat chat on chat.idChat = ucp.idChat " +
+		"join userpreferences up on ucp.idUser = up.idUser " +
+		"inner join (SELECT idChat, max(idMessages0) lastMessageSentInChat from messages0 group by idChat) n on n.idChat = chat.idChat " +
+		"where chat.idChat in (Select idChat from userchatpreferences where idUser = ?) " +
+		"order by lastMessageSentInChat desc"
+	fmt.Println("asdfa")
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	var chats map[int64]*model.Chat
 	chats = make(map[int64]*model.Chat)
 
 	if err != nil {
+		fmt.Println(err)
 		return chats, err
 	}
 	res, err := stmt.Query(userID)
@@ -23,14 +31,14 @@ func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
 	if err != nil {
 		return chats, err
 	}
+	fmt.Println("asdfa")
 	for res.Next() {
 		var idChat int64
 		var idUser int64
 		var displayName string
 		var createTime string
-		var updateTime string
 
-		err = res.Scan(&idChat, &idUser, &displayName, &createTime, &updateTime)
+		err = res.Scan(&idChat, &idUser, &displayName, &createTime)
 		if err != nil {
 			return chats, err
 		}
@@ -42,7 +50,6 @@ func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
 			var users = []model.User{user}
 			var newChat = model.Chat{
 				CreatedTime: createTime,
-				UpdateTime:  updateTime,
 				Users:       users}
 			chats[idChat] = &newChat
 		}

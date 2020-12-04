@@ -76,10 +76,18 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	vars := mux.Vars(r)
 	chatID, _ := strconv.ParseInt(vars["chatid"], 10, 64)
 	userID, _ := strconv.ParseInt(vars["userid"], 10, 64)
+
 	repository.CreateNewMessage(chatID, userID, message)
+	_, err = repository.GetUsersToSendMessageTo(chatID, userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 }
 
 func getChatPreferences(w http.ResponseWriter, r *http.Request) {
