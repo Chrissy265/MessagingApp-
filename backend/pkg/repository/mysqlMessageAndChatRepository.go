@@ -8,7 +8,7 @@ import (
 	"realtime-chat-go-react/pkg/model"
 )
 
-func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
+func ReturnAllUserChats(userID int64) ([]model.Chat, error) {
 	var sqlQuery = "SELECT chat.idChat, ucp.idUser, up.displayName, chat.createTime " +
 		"FROM userchatpreferences ucp " +
 		"join chat chat on chat.idChat = ucp.idChat " +
@@ -19,8 +19,7 @@ func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
 	fmt.Println("asdfa")
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
-	var chats map[int64]*model.Chat
-	chats = make(map[int64]*model.Chat)
+	var chats []model.Chat
 
 	if err != nil {
 		fmt.Println(err)
@@ -31,7 +30,10 @@ func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
 	if err != nil {
 		return chats, err
 	}
-	fmt.Println("asdfa")
+
+	//SQL response is sorted by chat, so we can assume all users in a chat are grouped
+	var currentChat model.Chat
+	first := true
 	for res.Next() {
 		var idChat int64
 		var idUser int64
@@ -44,16 +46,24 @@ func ReturnAllUserChats(userID int64) (map[int64]*model.Chat, error) {
 		}
 		var user model.User = model.User{UserID: idUser, DisplayName: displayName}
 
-		if chat, ok := chats[idChat]; ok {
-			chat.Users = append(chat.Users, user)
+		if !first && idChat == currentChat.ID {
+			currentChat.Users = append(currentChat.Users, user)
 		} else {
+			if !first {
+				chats = append(chats, currentChat)
+			}
+			first = false
 			var users = []model.User{user}
-			var newChat = model.Chat{
+			currentChat = model.Chat{
 				CreatedTime: createTime,
-				Users:       users}
-			chats[idChat] = &newChat
-		}
+				Users:       users,
+				ID:          idChat,
+			}
 
+		}
+	}
+	if !first {
+		chats = append(chats, currentChat)
 	}
 	return chats, err
 }
