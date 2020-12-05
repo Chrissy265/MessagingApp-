@@ -1,0 +1,300 @@
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+.formContent {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#sidebarCollapse{
+    background:mediumslateblue;
+    color: #fafafa;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    height: 100%;
+    background: mediumslateblue;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar.maintenance{
+   min-height: 200vh;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: mediumslateblue;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: mediumslateblue;
+    background: #fff;
+}
+
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #fff;
+    background: #664eeb;
+}
+#sidebar ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #664eeb;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    min-width: 320px;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+.card{
+    min-width: 320px;
+    max-width: 1500px;
+}
+
+#conversationProfilePicture {
+    border-radius: 50%;
+    width: 100px;
+    text-decoration: none;
+    float: left;
+  }
+
+ul {
+    list-style-type: none;
+}
+
+.modal{
+    min-width: 320px;
+}
+
+.btn-circle.btn-sm {
+    width: 25px;
+    height: 25px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    font-size: 8px;
+    text-align: center;
+    background-color: red;
+}
+
+.btn-circle.btn-sm.active,
+.btn-circle.btn-sm:active{
+    background-color: green;
+    box-shadow: gray;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:visited, .btn-primary:focus{
+    color: #fff;
+    background: mediumslateblue;
+    border-color:mediumslateblue;
+}
+
+.list-group-item.active {
+    background: mediumslateblue;
+    border-color: mediumslateblue;
+}
+
+.custom-select option:hover {
+    background: mediumslateblue;
+    border-color: mediumslateblue;
+}
+
+.btn-primary:disabled{
+    color: #fff;
+    background-color: #5e5a5a;
+    border-color: #5e5a5a;
+}
+
+.m-r-10px{ margin-right:10px; }
+.m-b-10px{ margin-bottom:10px; }
+.m-b-15px{ margin-bottom:15px; }
+.m-b-20px{ margin-bottom:20px; }
+.w-5-pct{ width:5%; }
+.w-10-pct{ width:10%; }
+.w-15-pct{ width:15%; }
+.w-20-pct{ width:20%; }
+.w-25-pct{ width:25%; }
+.w-30-pct{ width:30%; }
+.w-35-pct{ width:35%; }
+.w-40-pct{ width:40%; }
+.w-45-pct{ width:45%; }
+.w-50-pct{ width:50%; }
+.w-55-pct{ width:55%; }
+.w-60-pct{ width:60%; }
+.w-65-pct{ width:65%; }
+.w-70-pct{ width:70%; }
+.w-75-pct{ width:75%; }
+.w-80-pct{ width:80%; }
+.w-85-pct{ width:85%; }
+.w-90-pct{ width:90%; }
+.w-95-pct{ width:95%; }
+.w-100-pct{ width:100%; }
+.display-none{ display:none; }
+.padding-bottom-2em{ padding-bottom:2em; }
+.width-30-pct{ width:30%; }
+.width-40-pct{ width:40%; }
+.overflow-hidden{ overflow:hidden; }
+.margin-right-1em{ margin-right:1em; }
+.right-margin{ margin:0 .5em 0 0; }
+.margin-bottom-1em { margin-bottom:1em; }
+.margin-zero{ margin:0; }
+.text-align-center{ text-align:center; }
+
+#conversations .card-body {
+    max-height:600px;
+    overflow:auto;
+}
+
+.delete {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 0%;
+    padding: 12px 16px;
+    transform: translate(0%, -50%);
+}
+
+.delete:hover {background: #bbb;}
+
+
+.btn-xs {
+        padding: 0;
+        font-size: .480rem;
+        line-height: .25;
+        border-radius: 0rem;
+}
+
+.disabled {
+	color: #999;
+}
+
+li {
+    text-decoration: none;
+}
+
+#messageAndDate {
+    width: 500px;
+}
+
+#conversationRow {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
+
+#fullMessageInfo {
+    width: auto;
+    overflow: hidden;
+    flex: 1;
+}
+
+#fullProfileInfo {
+    width: auto;
+    overflow: hidden;
+    flex: 1;
+    vertical-align: center;
+}
+
+#profileInfo {
+    width: auto;
+    overflow: hidden;
+    flex: 1;
+}
+
+#profilePicture {
+    height: 40vh;
+    width: 40vh;
+    display: block;
+    float: left;
+    margin: 20px;
+}
+
+#profileRow {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
