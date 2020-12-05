@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
 	"realtime-chat-go-react/pkg/database/mysql"
 	"realtime-chat-go-react/pkg/model"
 )
@@ -109,10 +108,6 @@ func CreateNewUserChat(users []int64) error {
 		}
 	}
 	return tx.Commit()
-}
-
-func deleteUserChat(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 }
 
 func GetRecentMesages(chatID int64) ([]model.Message, error) {
