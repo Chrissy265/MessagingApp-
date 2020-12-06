@@ -9,9 +9,9 @@ import (
 
 func GetUserContacts(userId int64) ([]model.User, error) {
 	var sqlQuery = "select u.idUser, displayName, google_id " +
-		"from mydb.usercontacts uc " +
-		"join mydb.user u on u.idUser = uc.IdContact " +
-		"join mydb.userpreferences up on up.idUser = uc.IdContact " +
+		"from db.usercontacts uc " +
+		"join db.user u on u.idUser = uc.IdContact " +
+		"join db.userpreferences up on up.idUser = uc.IdContact " +
 		"where uc.idUser = ?"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
@@ -31,8 +31,8 @@ func GetUserContacts(userId int64) ([]model.User, error) {
 
 func SearchContact(search string, userID int64) ([]model.User, error) {
 	var sqlQuery = "select u.idUser, displayName, google_id " +
-		"from mydb.user u " +
-		"join mydb.userpreferences up on up.idUser = u.idUser " +
+		"from db.user u " +
+		"join db.userpreferences up on up.idUser = u.idUser " +
 		"where (UPPER(up.displayName) like UPPER(?) || UPPER(u.email) like UPPER(?)) " +
 		"AND not u.idUser = ? " +
 		"AND (select iduserContacts from usercontacts where idUser = ? and idContact = u.idUser) is null "

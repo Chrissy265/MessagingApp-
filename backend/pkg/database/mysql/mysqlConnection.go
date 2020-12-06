@@ -14,7 +14,7 @@ var db *DB
  * Initialize database connection
  */
 func initializeMySQL() {
-	dBConnection, err := Open("mysql", "root:root@(localhost:3306)/mydb")
+	dBConnection, err := Open("mysql", "admin:Password1!@(database-2.canbz0ws5cxo.us-east-2.rds.amazonaws.com:3306)/db")
 	if err != nil {
 		fmt.Println("Connection Failed!!")
 	}
