@@ -20,7 +20,7 @@
     <script src="docCookies.js"></script>
 </head>
 
-<body data-gr-c-s-loaded="true">
+<body data-gr-c-s-loaded="true" onload="startup()">
 <div class="wrapper">
 
     <!-- Sidebar  -->
@@ -60,7 +60,7 @@
 
                     <a href="#!" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div id="conversationRow" class="d-flex">
-                            <img id="conversationProfilePicture" src="blank-profile-picture.png" alt="Avatar">
+                            <img id="conversationProfilePicture" class="rounded-circle" src="blank-profile-picture.png" alt="Avatar">
                             <div id="fullMessageInfo">
                                 <h5>Test heading</h5>
                                 <div id="messageAndDate" class="d-flex w-100 justify-content-between">
@@ -89,6 +89,31 @@ $(document).ready(function () {
             $('#sidebar').toggleClass('active')
         });
     });
+
+function populateConversations() {
+    $.ajax({
+        type: 'get',
+        url: 'http://localhost:8080/chats/user/6',
+        data: {},
+        success: function(result){
+            console.log(result);
+
+            var res = JSON.parse(result);
+
+            console.log(res.length);
+
+            for(var i=0; i<res.length; i++) {
+                htmlStr = "";
+                console.log(res[i])
+            }
+        }
+    })
+}
+
+function startup() {
+    populateConversations();
+}
+
 </script>
 
 </body>

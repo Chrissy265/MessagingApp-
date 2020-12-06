@@ -298,3 +298,20 @@ li {
     gap: 20px;
     width: 100%;
 }
+
+#contactProfilePicture {
+    border-radius: 50%;
+    float: left;
+  }
+
+#contactRow {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
+
+#contactDisplayName {
+    vertical-align: center;
+}
+

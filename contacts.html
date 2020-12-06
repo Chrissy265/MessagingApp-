@@ -20,7 +20,7 @@
     <script src="docCookies.js"></script>
 </head>
 
-<body data-gr-c-s-loaded="true">
+<body data-gr-c-s-loaded="true" onload="startup()">
 <div class="wrapper">
 
     <!-- Sidebar  -->
@@ -57,14 +57,56 @@
             <div class="card-body">
                 <input id="contactSearch" class="form-control" type="text" placeholder="Search Contacts...">
                 <br>
-                <!-- List of Invoices -->
+                <!-- List of Contacts -->
                 <div id="contactList" class="list-group">
-
+                    
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script type="text/javascript">
+    // Collapse/Open Sidebar
+    $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active')
+            });
+        });
+    
+    function populateContacts() {
+        $.ajax({
+            type: 'get',
+            url: 'http://localhost:8080/user/6/contacts',
+            data: {},
+            success: function(result){
+                console.log(result);
+    
+                var res = JSON.parse(result);
+    
+                console.log(res.length);
+    
+                for(var i=0; i<res.length; i++) {
+                    htmlStr = "";
+                    console.log(res[i]);
+                    htmlStr += '<a href="profile.html?userId=' + res[i].UserID + '" ';
+                    htmlStr += 'class="list-group-item list-group-item-action flex-column align-items-start">';
+                    htmlStr += '<div id="contactRow" class="d-flex">';
+                    htmlStr += '<img id="contactProfilePicture" class="rounded-circle" src="luna.jpg" alt="Avatar" width="150" height="150">';
+                    htmlStr += '<h3 id="contactDisplayName">' + res[i].DisplayName + '</h3></div></a>';
+                    $('#contactList').append(htmlStr);
+                }
+            }
+        })
+    }
+    
+    function startup() {
+        populateContacts();
+    }
+    
+    </script>
+    
+
 </body>
 </html>
