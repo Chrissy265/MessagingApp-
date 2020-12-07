@@ -25,11 +25,16 @@ After cloning the "backend" branch. We have 2 options for building and deploying
 	docker-compose up -d backend
 	
 The golang server should now be running on port 8080
-###FrontEnd
+### FrontEnd
 ????????????
 
-#Architecture
-MySQL server layout
+# Architecture
+Architecture Overview
+
+## Component View
+----insert image here
+
+## MySQL server layout
 
 ----insert image here
 
@@ -50,3 +55,5 @@ yellow keys are primary keys
 	- Current implementation has all messages being stored in messages0
 - messages0- stores all user messages
 
+## Sequence Diagram
+----insert image here
