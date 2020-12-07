@@ -36,7 +36,7 @@ var server = http.createServer(function (request, response) {
         }
       });
       break;
-    case "/HtmlPage2.html":
+    case "/contacts.html":
       fs.readFile(__dirname + path, function (error, data) {
         if (error) {
           response.writeHead(404);
@@ -58,7 +58,7 @@ var server = http.createServer(function (request, response) {
       break;
   }
 });
-server.listen(8080);
+server.listen(8081);
 
 function css(request, response) {
   console.log(request.url);

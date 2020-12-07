@@ -1,0 +1,103 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script><!------ Include the above in your HEAD tag ---------->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/412b07d0f6.js" crossorigin="anonymous"></script><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
+    <script src="docCookies.js"></script>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- Sidebar  -->
+    <div>
+        <nav id="sidebar" class="fixed conversations">
+            <div class="sidebar-header"><h3 class="text-center">Text App</h3></div>
+
+            <ul class="list-unstyled components">
+                <li><a href="conversations.html"><i class="far fa-comments" aria-hidden="true"></i> Conversations</a></li>
+                <li><a href="contacts.html"><i class="far fa-address-book" aria-hidden="true"></i>  Contacts</a></li>
+                <li><a href="myprofile.html"><i class="far fa-user-circle" aria-hidden="true"></i>  Profile</a></li>
+            </ul>
+
+        </nav>
+    </div>
+
+    <!-- Page Content  -->
+    <div id="content">
+        <!-- Page Header Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn"><i class="fas fa-bars" aria-hidden="true"></i></button>
+                <h4 class="nav navbar-nav navbar-center">Conversations</h4>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><button type="button" class="btn btn-primary" onclick="signout()">Log Out</button></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="messages" class="card mx-auto">
+            <div class="card-body">
+                <!-- List of Conversations for the signed in user -->
+                <div id="messageList" class="list-group">
+                      <div class="msg_history">
+                        <div class="incoming_msg">
+                          <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                          <div class="received_msg">
+                            <div class="received_withd_msg">
+                              <p>Test which is a new approach to have all
+                                solutions</p>
+                              <span class="time_date"> 11:01 AM    |    June 9</span></div>
+                          </div>
+                        </div>
+                        <div class="outgoing_msg">
+                          <div class="sent_msg">
+                            <p>Test which is a new approach to have all
+                              solutions</p>
+                            <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+                        </div>
+                        <div class="incoming_msg">
+                          <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                          <div class="received_msg">
+                            <div class="received_withd_msg">
+                              <p>Test, which is a new approach to have</p>
+                              <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
+                          </div>
+                        </div>
+                        <div class="outgoing_msg">
+                          <div class="sent_msg">
+                            <p>Apollo University, Delhi, India Test</p>
+                            <span class="time_date"> 11:01 AM    |    Today</span> </div>
+                        </div>
+                        <div class="incoming_msg">
+                          <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                          <div class="received_msg">
+                            <div class="received_withd_msg">
+                              <p>We work directly with our designers and suppliers,
+                                and sell direct to you, which means quality, exclusive
+                                products, at a price anyone can afford.</p>
+                              <span class="time_date"> 11:01 AM    |    Today</span></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="type_msg">
+                        <div class="input_msg_write">
+                          <input type="text" class="write_msg" placeholder="Type a message" />
+                          <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>
