@@ -1,7 +1,16 @@
 version: '3.5'
 
 services:
+  backend:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
   redis:
     image: "redis:alpine"
     ports:
-      - "6364:6379"
+      - "6379:6379"
+  db:
+    build: ./dockersql/
+    ports:
+      - "3307:3306"

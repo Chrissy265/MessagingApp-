@@ -3,6 +3,7 @@ package mysql
 import (
 	. "database/sql"
 	"fmt"
+	"realtime-chat-go-react/pkg/config"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -14,19 +15,21 @@ var db *DB
  * Initialize database connection
  */
 func initializeMySQL() {
-	dBConnection, err := Open("mysql", "admin:Password1!@(database-2.canbz0ws5cxo.us-east-2.rds.amazonaws.com:3306)/db")
+	fmt.Println("dbInit")
+	dBConnection, err := Open("mysql", config.EnvironmentConfiguration.Connection.MySQL)
 	if err != nil {
 		fmt.Println("Connection Failed!!")
+		return
 	}
 	err = dBConnection.Ping()
 	if err != nil {
 		fmt.Println("Ping Failed!!")
+		return
 	}
 	db = dBConnection
 	dBConnection.SetMaxOpenConns(10)
 	dBConnection.SetMaxIdleConns(5)
 	dBConnection.SetConnMaxLifetime(time.Second * 10)
-	fmt.Println("dbInit")
 }
 
 /*

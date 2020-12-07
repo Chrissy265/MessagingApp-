@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
 	"realtime-chat-go-react/pkg/database/mysql"
 	"realtime-chat-go-react/pkg/model"
 )
@@ -111,10 +110,6 @@ func CreateNewUserChat(users []int64) error {
 	return tx.Commit()
 }
 
-func deleteUserChat(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-}
-
 func GetRecentMesages(chatID int64) ([]model.Message, error) {
 	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM messages0 where idChat = ? order by createdTime desc, idMessages0 desc limit 50"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
@@ -175,7 +170,7 @@ func getRecentMesages(res *sql.Rows, messages []model.Message) ([]model.Message,
 
 func CreateNewMessage(chatId int64, userId int64, message string) (int64, error) {
 	var sqlQuery = "INSERT into messages0 (idChat, idSentByUser, message) VALUES(?,?,?)"
-
+	fmt.Println("hi")
 	tx, err := mysql.GetMySQLConnection().Begin()
 	if err != nil {
 		return -1, err
@@ -189,7 +184,9 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 	}
 	defer stmt.Close()
 	res, err := stmt.Exec(chatId, userId, message)
+	fmt.Println("hi")
 	if err != nil {
+		fmt.Println("hi")
 		fmt.Println(err)
 		tx.Rollback()
 		return -1, err
@@ -201,7 +198,7 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 }
 
 func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, error) {
-	var sqlQuery = "SELECT idUser where idChat = ? and not idUser = ?"
+	var sqlQuery = "SELECT idUser from userchatpreferences where idChat = ? and not idUser = ?"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	ids := []int64{}
@@ -225,5 +222,6 @@ func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, erro
 		ids = append(ids, userId)
 
 	}
+	fmt.Println(ids)
 	return ids, nil
 }
