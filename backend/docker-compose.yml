@@ -4,9 +4,6 @@ services:
   backend:
     build:
       context: .
-    depends_on: 
-      - redis
-      - db
     ports:
       - "8080:8080"
   redis:
@@ -14,6 +11,6 @@ services:
     ports:
       - "6379:6379"
   db:
-    build: ./sql/
+    build: ./dockersql/
     ports:
       - "3307:3306"
