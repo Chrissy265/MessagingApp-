@@ -29,7 +29,7 @@ The golang server should now be running on port 8080
 ????????????
 
 # Architecture
-Architecture Overview
+## Architecture Overview
 
 ## Component View
 ----insert image here
