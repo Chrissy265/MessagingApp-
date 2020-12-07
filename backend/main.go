@@ -25,13 +25,14 @@ var server *socketio.Server
 func createNewMessage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	var message string
+	var message Messagething
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	err = json.Unmarshal(body, &message)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -50,7 +51,7 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := repository.CreateNewMessage(chatID, userID, message)
+	id, err := repository.CreateNewMessage(chatID, userID, message.Message)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -66,7 +67,7 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 	websocketMessage := websocket.Message{
 		UserID:  strconv.FormatInt(userID, 10),
 		ChatID:  strconv.FormatInt(chatID, 10),
-		Content: message,
+		Content: message.Message,
 	}
 	bytes, err := json.Marshal(websocketMessage)
 	messageString := string(bytes)
@@ -143,4 +144,8 @@ func main() {
 	}
 
 	setupRoutes()
+}
+
+type Messagething struct {
+	Message string
 }
