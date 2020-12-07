@@ -1,7 +1,19 @@
 version: '3.5'
 
 services:
+  backend:
+    build:
+      context: .
+    depends_on: 
+      - redis
+      - db
+    ports:
+      - "8080:8080"
   redis:
     image: "redis:alpine"
     ports:
-      - "6364:6379"
+      - "6379:6379"
+  db:
+    build: ./sql/
+    ports:
+      - "3307:3306"

@@ -170,7 +170,7 @@ func getRecentMesages(res *sql.Rows, messages []model.Message) ([]model.Message,
 
 func CreateNewMessage(chatId int64, userId int64, message string) (int64, error) {
 	var sqlQuery = "INSERT into messages0 (idChat, idSentByUser, message) VALUES(?,?,?)"
-
+	fmt.Println("hi")
 	tx, err := mysql.GetMySQLConnection().Begin()
 	if err != nil {
 		return -1, err
@@ -184,7 +184,9 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 	}
 	defer stmt.Close()
 	res, err := stmt.Exec(chatId, userId, message)
+	fmt.Println("hi")
 	if err != nil {
+		fmt.Println("hi")
 		fmt.Println(err)
 		tx.Rollback()
 		return -1, err
@@ -196,7 +198,7 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, error)
 }
 
 func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, error) {
-	var sqlQuery = "SELECT idUser where idChat = ? and not idUser = ?"
+	var sqlQuery = "SELECT idUser from userchatpreferences where idChat = ? and not idUser = ?"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	ids := []int64{}
@@ -220,5 +222,6 @@ func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, erro
 		ids = append(ids, userId)
 
 	}
+	fmt.Println(ids)
 	return ids, nil
 }

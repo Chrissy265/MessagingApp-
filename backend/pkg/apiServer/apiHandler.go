@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	redisConnection "realtime-chat-go-react/pkg/database/redis"
 	"realtime-chat-go-react/pkg/repository"
-	"realtime-chat-go-react/pkg/websocket"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -94,62 +92,6 @@ func getRecentMesagesBefore(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(messages)
 }
 
-func createNewMessage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	var message string
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	err = json.Unmarshal(body, &message)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	vars := mux.Vars(r)
-	chatID, err := strconv.ParseInt(vars["chatid"], 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	userID, err := strconv.ParseInt(vars["userid"], 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	id, err := repository.CreateNewMessage(chatID, userID, message)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	users, err := repository.GetUsersToSendMessageTo(chatID, userID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	websocketMessage := websocket.Message{
-		UserID:  strconv.FormatInt(userID, 10),
-		ChatID:  strconv.FormatInt(chatID, 10),
-		Content: message,
-	}
-	rediscon, _ := redisConnection.RedisConn()
-	for user := range users {
-
-		rediscon.Do("PUBLISH", user, websocketMessage)
-	}
-
-	json.NewEncoder(w).Encode(id)
-
-}
-
 func getUserContacts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -232,14 +174,49 @@ func deleteContact(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getChatPreferences(w http.ResponseWriter, r *http.Request) {
+func getUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	vars := mux.Vars(r)
+	i, ok := vars["clientid"]
+	if !ok {
+		http.Error(w, "no clientid", http.StatusBadRequest)
+		return
+	}
+	user, err := repository.GetUser(i)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(user)
 }
 
-func setChatPreferences(w http.ResponseWriter, r *http.Request) {
+func addNewUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	var user NewUser
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	id, err := repository.AddNewUser(user.ClientId, user.DisplayName, user.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(id)
 }
 
-func getUserPreferences(w http.ResponseWriter, r *http.Request) {
-}
-
-func setUserPreferences(w http.ResponseWriter, r *http.Request) {
+type NewUser struct {
+	DisplayName string
+	ClientId    string
+	Email       string
 }
