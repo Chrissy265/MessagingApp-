@@ -51,7 +51,7 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := repository.CreateNewMessage(chatID, userID, message.Message)
+	id, createdat, err := repository.CreateNewMessage(chatID, userID, message.Message)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -65,9 +65,10 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	websocketMessage := websocket.Message{
-		UserID:  strconv.FormatInt(userID, 10),
-		ChatID:  strconv.FormatInt(chatID, 10),
-		Content: message.Message,
+		UserID:    strconv.FormatInt(userID, 10),
+		ChatID:    strconv.FormatInt(chatID, 10),
+		CreatedAt: createdat,
+		Content:   message.Message,
 	}
 	bytes, err := json.Marshal(websocketMessage)
 	messageString := string(bytes)
@@ -78,8 +79,11 @@ func createNewMessage(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(messageString)
 		server.BroadcastToRoom(string(user), "chat message", messageString)
 	}
-
-	json.NewEncoder(w).Encode(id)
+	newMessage := Messagething2{
+		MessageId: id,
+		CreatedAt: createdat,
+	}
+	json.NewEncoder(w).Encode(newMessage)
 
 }
 
@@ -148,4 +152,9 @@ func main() {
 
 type Messagething struct {
 	Message string
+}
+
+type Messagething2 struct {
+	MessageId int64
+	CreatedAt string
 }
