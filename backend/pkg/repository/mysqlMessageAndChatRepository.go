@@ -66,47 +66,47 @@ func ReturnAllUserChats(userID int64) ([]model.Chat, error) {
 	return chats, err
 }
 
-func CreateNewUserChat(users []int64) error {
+func CreateNewUserChat(users []int64) (int64, error) {
 	var sqlQueryCreateChat = "INSERT into chat (messageTable) VALUES(0)"
 	var sqlQueryCreatePreferences = "INSERT into userchatpreferences (idChat, idUser) VALUES(?,?)"
 
 	tx, err := mysql.GetMySQLConnection().Begin()
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	//intert new chat
 	stmt, err := tx.Prepare(sqlQueryCreateChat)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	defer stmt.Close()
 
 	res, err := stmt.Exec()
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	//get new chat id
 	id, _ := res.LastInsertId()
-	fmt.Println(id)
 
 	//insert user chat preferences for all users in chat
 	stmt2, err := tx.Prepare(sqlQueryCreatePreferences)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	defer stmt2.Close()
 
 	for _, user := range users {
 		if _, err := stmt2.Exec(id, user); err != nil {
 			tx.Rollback()
-			return err
+			return -1, err
 		}
 	}
-	return tx.Commit()
+
+	return id, tx.Commit()
 }
 
 func GetRecentMesages(chatID int64) ([]model.Message, error) {
