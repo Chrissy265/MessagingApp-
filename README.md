@@ -1,7 +1,9 @@
 
 # Messaging App
 ## Features
-- built in google authentication for login
+- ~~built in google authentication for login ~~
+	- built in google authentication for login (could not get this working ☹)
+	- note- you will see this in the diagrams below, but it is not currently functional. It has been left in to show the intention of how the login process should have worked
 - Modern programming teqniques: GoLang server (new language for all members)
 	- server is API accessible
 - Persistent storage using MySQL
@@ -10,11 +12,18 @@
 	- ability to set config file per environment
 	- includes MySQL dependency running in a separate container (with a default DB creation script) or AWS RDS MySQL server can can connected to
 
+## Note
+- As we could not get authentication working, we have created a log in short cut for you to use to test the app. When you follow the deploy steps below, you will be taken to a "login" that simpole asks for your userid. We have prepopulated some users in our user table that you can use to test our application
+
+<INSERT TABLE IMAGE HERE>
+
+- The initial architectural plan was to have React, websockets or socket.io, google api authentication, docker, and deploy to a free AWS tier. Unfortunately, we found that we tried to  do too many new things. All of these technologies were new to us. We got all of these features almost working at certain points, but had to move on from them in order to produce a working application.
+
 ##  Build and Deploy
 ### Backend: Golang server and MySQL setup
 To build and deploy the Go server, we utilize docker. 
 
-Prerequisites:
+Installation Prerequisites:
 - docker
 - docker-compose
 
@@ -28,6 +37,7 @@ After cloning the branch, navigate to the backend folder: We have 2 options for 
 - docker-compose up -d backend
 	
 The golang server should now be running on port 8080
+
 ### FrontEnd
 
 To deploy the bootstrab front end, we utilize http-serve (ideally, this would run on an S3 service in AWS and would not need docker)
@@ -65,15 +75,6 @@ Database:
 The user id will be stored to keep track messages. When the user calls for the messages it will retrieve from MySQL table called message0. 
 The messages will be stored at the message0 table.  
 
-
-
-
- 
- 
- 
- 
-
-
 ## Component View
 
 ![](ComponentsDiagram.PNG?raw=true)
@@ -82,18 +83,18 @@ The messages will be stored at the message0 table.
  
  Front End of the applciation consist of the following: 
  
-Login page 
-Conversations page
-Contacts page
+- Login page 
+- Conversations page
+- Contacts page
  
  The backend of the application consist of the following: 
  
-  API Server Layer: 
-  If the user logins using the Google OAuthenication (not currently functional at this time), what is suppose to happen is the UserAuthenication module will call for the Google API Authenication to authorize the user. 
-  The web api request will access the module pkg and repository that contains, mysqlContactRepository, mysqlUserRepository, and mysqlMessageAndChatRepository. The data will format from the data models module.  
+  - API Server Layer: 
+  - If the user logins using the Google OAuthenication (not currently functional at this time), what is suppose to happen is the UserAuthenication module will call for the Google API Authenication to authorize the user. 
+  - The web api request will access the module pkg and repository that contains, mysqlContactRepository, mysqlUserRepository, and mysqlMessageAndChatRepository. The data will format from the data models module.  
  
  Database Connection Layer: 
- The repository will connect to the database connection layer connects to the MySQL database to handle retrieve and store data. 
+  - The repository will connect to the database connection layer connects to the MySQL database to handle retrieve and store data. 
 
 ## MySQL server layout
 
@@ -134,12 +135,3 @@ Every user that is in the messaging app will be assigned a user id which will tr
 Conversation Page: 
 
 The chat page will render after a successful login and you are establish user with a user ID. The current user can add a contact for another user.  User #2 can access the web app and repeat the same process, login and get assign a user id.  User #1 now can add User #2 through the contact page. Both users now can send messages to each other. The messages are sent through the Go Lang server, saves the message then store in the MySQL database. User #2 will be able to render the new messages and respond to those messages through the web app. The messages will be retrieved from the MySQL database. 
-
-
-
-
- 
-
-
-
-
