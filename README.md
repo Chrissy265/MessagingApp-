@@ -14,7 +14,7 @@
 ## Note
 - As we could not get authentication working, we have created a log in short cut for you to use to test the app. When you follow the deploy steps below, you will be taken to a "login" that simpole asks for your userid. We have prepopulated some users in our user table that you can use to test our application
 
-<INSERT TABLE IMAGE HERE>
+<<INSERT TABLE IMAGE HERE>>
 
 - The initial architectural plan was to have React, websockets or socket.io, google api authentication, docker, and deploy to a free AWS tier. Unfortunately, we found that we tried to  do too many new things. All of these technologies were new to us. We got all of these features almost working at certain points, but had to move on from them in order to produce a working application.
 
