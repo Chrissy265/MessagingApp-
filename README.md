@@ -16,9 +16,9 @@ To build and deploy the Go server, we utilize docker.
 
 Prerequisites:
 - docker
-- docker-compos
+- docker-compose
 
-After cloning the "backend" branch. We have 2 options for building and deploying.
+After cloning the branch, navigate to the backend folder: We have 2 options for building and deploying.
 1. With a local MySQL docker container
 - docker-compose build --build-arg CONFIG=local
 - docker-compose up
@@ -29,7 +29,21 @@ After cloning the "backend" branch. We have 2 options for building and deploying
 	
 The golang server should now be running on port 8080
 ### FrontEnd
-????????????
+
+To deploy the bootstrab front end, we utilize http-serve (ideally, this would run on an S3 service in AWS and would not need docker)
+From the top level, navigate to the frontend folder
+
+The first time you run the project, make sure you run this command first:
+- npm install http-server
+
+After this is installed, the front end can be hosted with 
+- http-server
+
+take note of the port the server starts on and replace 8080 if necessary at the following URL.
+
+http://localhost:8080/conversations.html
+
+The application should now be hosted!
 
 # Architecture
 ## Architecture Overview
@@ -80,18 +94,6 @@ Contacts page
  
  Database Connection Layer: 
  The repository will connect to the database connection layer connects to the MySQL database to handle retrieve and store data. 
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## MySQL server layout
 
