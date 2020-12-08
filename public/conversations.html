@@ -1,0 +1,128 @@
+<html lang="en" class="gr__ec2-18-207-195-213_compute-1_amazonaws_com"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <title>Text App | Conversations</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome JS -->
+    <script src="https://kit.fontawesome.com/412b07d0f6.js" crossorigin="anonymous"></script><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
+    <script src="docCookies.js"></script>
+    <script src="script.js"></script>
+
+</head>
+
+<body data-gr-c-s-loaded="true" onload="startup()">
+<div class="wrapper">
+
+    <!-- Sidebar  -->
+    <div>
+        <nav id="sidebar" class="fixed conversations">
+            <div class="sidebar-header"><h3 class="text-center">Text App</h3></div>
+
+            <ul class="list-unstyled components">
+                <li class="active"><a href="#"><i class="far fa-comments" aria-hidden="true"></i> Conversations</a></li>
+                <li><a href="contacts.html"><i class="far fa-address-book" aria-hidden="true"></i>  Contacts</a></li>
+            </ul>
+
+        </nav>
+    </div>
+
+
+    <!-- Page Content  -->
+    <div id="content">
+        <!-- Page Header Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn"><i class="fas fa-bars" aria-hidden="true"></i></button>
+                <h4 class="nav navbar-nav navbar-center">Conversations</h4>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><button type="button" class="btn btn-primary" onclick="signout()">Log Out</button></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Individual Page Content Goes Here -->
+
+        <div id="conversations" class="card mx-auto">
+            <div class="card-body">
+                <!-- List of Conversations for the signed in user -->
+                <div id="conversationList" class="list-group">
+
+                    
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- END OF INDIVIDUAL PAGE CONTENT -->
+
+    </div>
+</div>
+
+<script type="text/javascript">
+// Collapse/Open Sidebar
+$(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active')
+        });
+    });
+
+    function populateConversationList() {
+        var currentId = docCookies.getItem("userid");
+        var urlStr = "http://localhost:8080/chats/user/" + currentId;
+        $.ajax({
+            type: 'get',
+            url: urlStr,
+            data: {},
+            success: function(result) {
+                var res = JSON.parse(result);
+                for(var i=0; i<res.length; i++){
+                var htmlStr = "";
+                htmlStr += '<a href="chat.html?userId=' + res[i].Users[1].UserID;
+                htmlStr += '&displayName=' + res[i].Users[1].DisplayName;
+                htmlStr += '&chatId=' + res[i].ID;
+                htmlStr += '" class="list-group-item list-group-item-action flex-column align-items-start">';
+                htmlStr += '<div id="conversationRow" class="d-flex">';
+                htmlStr += '<div id="fullMessageInfo"';
+                htmlStr += '<h5>' + res[i].Users[1].DisplayName + '</h5>';
+                htmlStr += '</div></div></a>';
+                $('#conversationList').append(htmlStr);
+                }
+            }
+        })
+    }
+
+  function startup() {
+      loggedin();
+      populateConversationList();
+  }
+
+  function signout() {
+  docCookies.removeItem("userid");
+  window.location.href = "login.html";
+  }
+
+  function loggedin() {
+  //if no user is logged in and they are trying to access a page other than the login page,
+  //send them to the login page
+  if (
+    docCookies.getItem("userid") == null &&
+    window.location.href.indexOf("login.html") == -1
+  ) {
+    window.location.href = "login.html";
+  }
+}
+</script>
+
+</body>
+</html>
