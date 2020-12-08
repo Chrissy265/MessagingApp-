@@ -10,8 +10,3 @@ services:
     build: ./dockersql/
     ports:
       - "3307:3306"
-  frontend:
-    build:
-      context: ../frontend
-    ports:
-      - "8000:8000"

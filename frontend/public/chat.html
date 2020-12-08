@@ -22,7 +22,10 @@
 <!-- Sidebar  -->
 <div>
   <nav id="sidebar" class="fixed conversations">
-      <div class="sidebar-header"><h3 class="text-center">Text App</h3></div>
+      <div class="sidebar-header"><h3 class="text-center">Text App</h3>
+      <br>
+      <h2 id="headerUserId"></h2>
+      </div>
       <ul class="list-unstyled components">
           <li><a href="conversations.html"><i class="far fa-comments" aria-hidden="true"></i> Conversations</a></li>
           <li><a href="contacts.html"><i class="far fa-address-book" aria-hidden="true"></i>  Contacts</a></li>
@@ -80,6 +83,7 @@ $(document).ready(function () {
     var messages = [];
 
     function startup() {
+
       loggedin();
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
@@ -87,7 +91,7 @@ $(document).ready(function () {
       otherUserId = urlParams.get('userId');
       chatId = urlParams.get('chatId');
 
-      var headerStr = "Conversation with " + otherUserName;
+      var headerStr = "Logged In As User ID " + docCookies.getItem("userid");
       document.getElementById("pageHeader").innerHTML = headerStr;
       populateMessages(otherUserId, true);
 

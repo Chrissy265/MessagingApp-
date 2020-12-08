@@ -92,6 +92,7 @@
     
     document.getElementById('contactSearch').onkeydown = function(event) {
       if (event.keyCode == 13) {
+        $('#newContactsList').empty();
         searchContacts();
       }
     }
@@ -107,6 +108,7 @@
                 success: function(result) {
                     var res = JSON.parse(result);
                     for(var i=0; i<res.length; i++){
+                        alert(res[i].Contact.UserID);
                         var htmlStr = populateContactRow(res[i].Contact.UserID, res[i].Contact.DisplayName, res[i].ChatId);
                         $('#contactList').append(htmlStr);
                     }
@@ -138,6 +140,7 @@
                 success: function(result) {
                     var res = JSON.parse(result);
                     for(var i=0; i<res.length; i++){
+                        $("#newContactsList").empty();
                         var htmlStr = "";
                         htmlStr += '<button type="button" class="list-group-item ';
                         htmlStr += 'list-group-item-action" data-toggle="modal" ';

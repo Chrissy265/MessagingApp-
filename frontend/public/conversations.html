@@ -87,14 +87,30 @@ $(document).ready(function () {
             success: function(result) {
                 var res = JSON.parse(result);
                 for(var i=0; i<res.length; i++){
+                    alert(result);
+                var otherId = -1;
+                var str = parseInt(res[i].Users[1].UserID);
+                var curr = parseInt(docCookies.getItem("userid"));
+                var userIdForChat = -1;
+                var userNameForChat = "";
+                if (str == curr){
+                    alert(parseInt(res[i].Users[0].UserID));
+                    userIdForChat = parseInt(res[i].Users[0].UserID);
+                    userNameForChat = res[i].Users[0].DisplayName;
+                    alert(userNameForChat);
+                }
+                else{
+                    userIdForChat = str;
+                    userNameForChat = res[i].Users[1].DisplayName;
+                }
                 var htmlStr = "";
-                htmlStr += '<a href="chat.html?userId=' + res[i].Users[1].UserID;
-                htmlStr += '&displayName=' + res[i].Users[1].DisplayName;
+                htmlStr += '<a href="chat.html?userId=' + userIdForChat;
+                htmlStr += '&displayName=' + userNameForChat;
                 htmlStr += '&chatId=' + res[i].ID;
                 htmlStr += '" class="list-group-item list-group-item-action flex-column align-items-start">';
                 htmlStr += '<div id="conversationRow" class="d-flex">';
                 htmlStr += '<div id="fullMessageInfo"';
-                htmlStr += '<h5>' + res[i].Users[1].DisplayName + '</h5>';
+                htmlStr += '<h5>' + userNameForChat + '</h5>';
                 htmlStr += '</div></div></a>';
                 $('#conversationList').append(htmlStr);
                 }
