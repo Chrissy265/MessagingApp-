@@ -33,7 +33,7 @@ After cloning the branch, navigate to the backend folder: We have 2 options for 
 	
 2. Connect  to the AWS RDS MySQL server
 - docker-compose build --build-arg CONFIG=aws
-- docker-compose up -d backend
+- docker-compose up
 	
 The golang server should now be running on port 8080
 
