@@ -7,8 +7,8 @@
 - Persistent storage using MySQL
 - Ability to send and recieve messages in real time
 - Automatic build and deployment with docker-compose
-	-ability to set config file per environment
-	includes MySQL and redis dependencies each running in a separate container
+	- ability to set config file per environment
+	- includes MySQL dependency running in a separate container (with a default DB creation script) or AWS RDS MySQL server can can connected to
 
 ##  Build and Deploy
 ### Backend: Golang server and MySQL setup
@@ -34,12 +34,17 @@ The golang server should now be running on port 8080
 # Architecture
 ## Architecture Overview
 
+![](Overview.PNG?raw=true)
+
+
+
 ## Component View
-----insert image here
+
+![](ComponentsDiagram.PNG?raw=true)
 
 ## MySQL server layout
 
-----insert image here
+![](sqlDiagram.PNG?raw=true)
 
 red nodes are foreign keys
 yellow keys are primary keys
@@ -59,4 +64,5 @@ yellow keys are primary keys
 - messages0- stores all user messages
 
 ## Sequence Diagram
-----insert image here
+
+![](SequenceDiagram.PNG?raw=true)
