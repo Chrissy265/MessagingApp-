@@ -1,8 +1,7 @@
 
 # Messaging App
 ## Features
-- ~~built in google authentication for login ~~
-	- built in google authentication for login (could not get this working ☹)
+- ~~Built in google authentication for login~~ (could not get this working ☹)
 	- note- you will see this in the diagrams below, but it is not currently functional. It has been left in to show the intention of how the login process should have worked
 - Modern programming teqniques: GoLang server (new language for all members)
 	- server is API accessible
