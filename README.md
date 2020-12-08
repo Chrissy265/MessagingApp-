@@ -16,9 +16,9 @@ To build and deploy the Go server, we utilize docker.
 
 Prerequisites:
 - docker
-- docker-compos
+- docker-compose
 
-After cloning the "backend" branch. We have 2 options for building and deploying.
+After cloning the branch, navigate to the backend folder: We have 2 options for building and deploying.
 1. With a local MySQL docker container
 - docker-compose build --build-arg CONFIG=local
 - docker-compose up
@@ -29,18 +29,71 @@ After cloning the "backend" branch. We have 2 options for building and deploying
 	
 The golang server should now be running on port 8080
 ### FrontEnd
-????????????
+
+To deploy the bootstrab front end, we utilize http-serve (ideally, this would run on an S3 service in AWS and would not need docker)
+From the top level, navigate to the frontend folder
+
+The first time you run the project, make sure you run this command first:
+- npm install http-server
+
+After this is installed, the front end can be hosted with 
+- http-server
+
+take note of the port the server starts on and replace 8080 if necessary at the following URL.
+
+http://localhost:8080/conversations.html
+
+The application should now be hosted!
 
 # Architecture
 ## Architecture Overview
 
-![](Overview.PNG?raw=true)
+![](Overview.PNG?raw=true)  
+ 
+Users/Roles: 
+Actor 1 can send and recieve messages from Actor 2 by using the messaging application
+Actor 2 can send and recieve messages from Actor 1 by using the messaging application  
 
+Messaging App Boostrap Application: 
+The messaging app application consist of three pages, we use boostrap for the design of the UI.
+The application consist of HTML and JavaScript.  
+
+Server: Go Lang 
+The server handles the logic of the application. The backend is constructed using go lang. 
+
+Database: 
+The user id will be stored to keep track messages. When the user calls for the messages it will retrieve from MySQL table called message0. 
+The messages will be stored at the message0 table.  
+
+
+
+
+ 
+ 
+ 
+ 
 
 
 ## Component View
 
 ![](ComponentsDiagram.PNG?raw=true)
+
+ The user will access the Messaging UI component of the application. The frontend component of the application consist of three page which is the login, conversation, and contacts. The UI layer is created by using Bootstrap.  The Web API requests will contact the go lang server. The intention is to authenicate users using Google API authentication. The implementation is present but not functional at this time. The alternative route we use is on the login page the user insert their name then hit submit to be assign a user id. The data will be retrieve and save at MySQL database.  
+ 
+ Front End of the applciation consist of the following: 
+ 
+Login page 
+Conversations page
+Contacts page
+ 
+ The backend of the application consist of the following: 
+ 
+  API Server Layer: 
+  If the user logins using the Google OAuthenication (not currently functional at this time), what is suppose to happen is the UserAuthenication module will call for the Google API Authenication to authorize the user. 
+  The web api request will access the module pkg and repository that contains, mysqlContactRepository, mysqlUserRepository, and mysqlMessageAndChatRepository. The data will format from the data models module.  
+ 
+ Database Connection Layer: 
+ The repository will connect to the database connection layer connects to the MySQL database to handle retrieve and store data. 
 
 ## MySQL server layout
 
@@ -68,7 +121,10 @@ yellow keys are primary keys
 ![](SequenceDiagram.PNG?raw=true)  
 
 Login Page: 
-The user go on the web application Messaging app. The user have to login using their username and password or use Google OAuth sign in. If the user sign in with their Google crendentials email and password.  The Google OAuth login goes through the Go Lang server, if successful then return authorization code if success. The Go Lang server will request token to the Google API authenication then request user data.  
+The user go on the web application Messaging app. The user have to login using their username and password or use Google OAuth sign in. If the user sign in with their Google crendentials email and password.  The Google OAuth login goes through the Go Lang server, if successful then return authorization code if success. The Go Lang server will request token to the Google API authenication then request user data.   
+
+***SIMULATE TWO SEPERATE USERS SENDING MESSAGES TO EACH OTHER***** 
+Need to open two seperate browsers windows open to simulate two seperate users. 
 
 Create New User: 
 
