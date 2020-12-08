@@ -1,0 +1,2 @@
+connection:
+  mysql: human:mysql@(db:3306)/mydb

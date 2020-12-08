@@ -1,0 +1,2 @@
+connection:
+  mysql: admin:Password1!@(database-2.canbz0ws5cxo.us-east-2.rds.amazonaws.com:3306)/db

@@ -1,0 +1,243 @@
+<html lang="en" class="gr__ec2-18-207-195-213_compute-1_amazonaws_com"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <title>Text App | Conversations</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script><!------ Include the above in your HEAD tag ---------->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" href="chat.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/412b07d0f6.js" crossorigin="anonymous"></script><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
+  <script src="docCookies.js"></script>
+  <script src="script.js"></script>
+</head>
+
+<body data-gr-c-s-loaded="true" onload="startup()">
+<div class="wrapper">
+<!-- Sidebar  -->
+<div>
+  <nav id="sidebar" class="fixed conversations">
+      <div class="sidebar-header"><h3 class="text-center">Text App</h3>
+      <br>
+      <h2 id="headerUserId"></h2>
+      </div>
+      <ul class="list-unstyled components">
+          <li><a href="conversations.html"><i class="far fa-comments" aria-hidden="true"></i> Conversations</a></li>
+          <li><a href="contacts.html"><i class="far fa-address-book" aria-hidden="true"></i>  Contacts</a></li>
+      </ul>
+
+  </nav>
+</div>
+
+<!-- Page Content  -->
+<div id="content">
+  <!-- Page Header Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn"><i class="fas fa-bars" aria-hidden="true"></i></button>
+          <h4 id="pageHeader" class="nav navbar-nav navbar-center"></h4>
+          <ul class="nav navbar-nav navbar-right">
+              <li><button type="button" class="btn btn-primary" onclick="signout()">Log Out</button></li>
+          </ul>
+      </div>
+  </nav>
+
+  <div id="messages" class="card mx-auto">
+      <div class="card-body">
+          <!-- List of Conversations for the signed in user -->
+          <div id="messageList" class="list-group">
+                <div id="message_history" class="msg_history">
+                  
+                </div>
+                <div class="type_msg">
+                  <div class="input_msg_write">
+                    <input id="newMessageTextBox" type="text" class="write_msg" placeholder="Type a message" />
+                    <button class="msg_send_btn" type="button" onclick="sendMessage()"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+var chatId = -1;
+var otherUserName = "";
+var otherUserId = -1;
+
+// Collapse/Open Sidebar
+$(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active')
+        });
+    });
+
+    var messages = [];
+
+    function startup() {
+
+      loggedin();
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      otherUserName = urlParams.get('displayName');
+      otherUserId = urlParams.get('userId');
+      chatId = urlParams.get('chatId');
+
+      var headerStr = "Logged In As User ID " + docCookies.getItem("userid");
+      document.getElementById("pageHeader").innerHTML = headerStr;
+      populateMessages(otherUserId, true);
+
+      setInterval(function(){
+        populateMessages(otherUserId, false)
+      }, 3000);
+
+    }
+
+    document.getElementById('newMessageTextBox').onkeydown = function(event) {
+      if (event.keyCode == 13) {
+        sendMessage();
+      }
+    }
+
+    function populateMessages(userId, init){
+      if (chatId != -1){
+        //if the chat id exists, conversation was already started
+        //assume we're user 3
+        var currentUserId = docCookies.getItem("userid");
+        var urlStr = 'http://localhost:8080/chat/' + chatId + '/messages';
+        $.ajax({
+          type: 'get',
+          url: urlStr,
+          data: {},
+          success: function(result) {
+            var res = JSON.parse(result);
+            if (null != res){
+              for(var i=0; i<res.length; i++){
+                const found = messages.some(el => el === res[i].MessageId);
+                if(!found){
+                  //if the user id is the other person, incoming message
+                  var htmlStr = "";
+                  if (res[i].UserId == userId){
+                    var str = formatIncomingMessage(res[i].Message, res[i].CreatedTime*1000);
+                    
+                    if (init) {
+                      $('#message_history').prepend(str);
+                    }
+                    else{
+                      $('#message_history').append(str);
+                    }
+                  }
+                  //if user id is current user, outgoing message
+                  else{
+                    var str = formatOutgoingMessage(res[i].Message, res[i].CreatedTime*1000);
+                    
+                    if (init) {
+                      $('#message_history').prepend(str);
+                    }
+                    else{
+                      $('#message_history').append(str);
+                    }
+                  }
+                  messages.push(res[i].MessageId);
+                }
+
+              }
+            }
+          }
+        })
+      }
+      else {
+        var urlStr = 'http://localhost:8080/chat';
+        var currentUserId = docCookies.getItem("userid");
+
+        alert(JSON.stringify(
+            {Id1: parseInt(currentUserId), 
+             Id2: parseInt(userId)}));
+        $.ajax({
+          type: 'POST',
+          url: urlStr,
+          data: JSON.stringify(
+            {Id1: parseInt(currentUserId), 
+             Id2: parseInt(userId)}),
+          success: function(result) {
+            var urlstuff = "chat.html?userId=" + otherUserId + "&displayName=" + otherUserName + "&chatId=" + result;
+            window.location.href = urlstuff;
+          },
+          error: function(err){
+            alert(JSON.stringify(err));
+          }
+        })
+      }
+
+      
+    }
+
+    function sendMessage(){
+      var currentUserId = docCookies.getItem("userid");
+      var msg = document.getElementById("newMessageTextBox").value;
+
+      var urlStr = 'http://localhost:8080/chat/' + chatId + '/user/' + currentUserId + '/message';
+      $.ajax({
+        type: 'POST',
+        url: urlStr,
+        data: JSON.stringify({ Message : msg }),
+        success: function(result) {
+          var str = formatOutgoingMessage(msg, new Date(Date.now()));
+          
+          document.getElementById("newMessageTextBox").value = "";
+        },
+        error: function(data){
+            alert(JSON.stringify(data));
+        }
+      })
+    }
+
+    function formatIncomingMessage(msg, createdTime){
+      var htmlStr = "";
+      htmlStr += '<div class="incoming_msg">';
+      htmlStr += '<div class="received_msg">';
+      htmlStr += '<div class="received_withd_msg">';
+      htmlStr += '<p>' + msg + '</p>';
+      htmlStr += '<span class="time_date"> ' + new Date(createdTime) + '</span>';
+      htmlStr += '</div></div></div>';
+      return htmlStr;
+    }
+
+    function formatOutgoingMessage(msg, createdTime){
+      var htmlStr = "";
+      htmlStr += '<div class="outgoing_msg">';
+      htmlStr += '<div class="sent_msg">';
+      htmlStr += '<p>' + msg + '</p>';
+      htmlStr += '<span class="time_date"> ' + new Date(createdTime) + '</span>';
+      htmlStr += '</div></div>'
+      return htmlStr;
+    }
+
+    function signout() {
+  docCookies.removeItem("userid");
+  window.location.href = "login.html";
+}
+
+function loggedin() {
+  //if no user is logged in and they are trying to access a page other than the login page,
+  //send them to the login page
+  if (
+    docCookies.getItem("userid") == null &&
+    window.location.href.indexOf("login.html") == -1
+  ) {
+    window.location.href = "login.html";
+  }
+}
+
+</script>
+
+</body>
+</html>
