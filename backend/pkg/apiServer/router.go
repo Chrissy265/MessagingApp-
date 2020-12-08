@@ -1,6 +1,11 @@
 package apiServer
 
-import "github.com/gorilla/mux"
+import (
+	"net/http"
+	"realtime-chat-go-react/pkg/userAuthentication"
+
+	"github.com/gorilla/mux"
+)
 
 func SetRoutes(myRouter *mux.Router) {
 
@@ -21,4 +26,8 @@ func SetRoutes(myRouter *mux.Router) {
 	myRouter.HandleFunc("/chat/{chatid}/user/{userid}/message", createNewMessage).Methods("POST")
 
 	myRouter.HandleFunc("/user", addNewUser).Methods("POST")
+
+	myRouter.HandleFunc("/auth/google/login", userAuthentication.OauthGoogleLogin).Methods("GET")
+	myRouter.HandleFunc("/auth/google/callback", userAuthentication.OauthGoogleCallback).Methods("GET")
+	myRouter.Handle("/", http.FileServer(http.Dir("./login.html")))
 }
