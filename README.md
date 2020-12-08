@@ -12,7 +12,7 @@
 	- includes MySQL dependency running in a separate container (with a default DB creation script) or AWS RDS MySQL server can can connected to
 
 ## Note
-- As we could not get authentication working, we have created a log in short cut for you to use to test the app. When you follow the deploy steps below, you will be taken to a "login" that simpole asks for your userid. We have prepopulated some users in our user table that you can use to test our application
+- As we could not get authentication working, we have created a log in short cut for you to use to test the app. When you follow the deploy steps below, you will be taken to a "login" that simply asks for your userid. We have prepopulated some users in our user table that you can use to test our application
 
 <<INSERT TABLE IMAGE HERE>>
 
@@ -63,14 +63,14 @@ Users/Roles:
 Actor 1 can send and recieve messages from Actor 2 by using the messaging application
 Actor 2 can send and recieve messages from Actor 1 by using the messaging application  
 
-Messaging App Boostrap Application: 
+Messaging App Boostrap Application (ideally would be deployed on S3 in AWS): 
 The messaging app application consist of three pages, we use boostrap for the design of the UI.
 The application consist of HTML and JavaScript.  
 
-Server: Go Lang 
+Server: Go Lang (ideally would be deployed on Elastic Beanstalk for (EC2 with auto scaling and other management)): 
 The server handles the logic of the application. The backend is constructed using go lang. 
 
-Database: 
+Database (AWS RDS MySQL server): 
 The user id will be stored to keep track messages. When the user calls for the messages it will retrieve from MySQL table called message0. 
 The messages will be stored at the message0 table.  
 
