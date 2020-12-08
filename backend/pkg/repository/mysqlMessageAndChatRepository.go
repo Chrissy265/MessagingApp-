@@ -213,7 +213,6 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, string
 	if res1.Next() {
 
 		err := res1.Scan(&createdTime)
-		fmt.Println(createdTime)
 		if err != nil {
 			return -1, createdTime, err
 		}

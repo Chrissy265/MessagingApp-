@@ -19,7 +19,6 @@ func setupRoutes() {
 
 func main() {
 	fmt.Println("Chat App starting")
-	fmt.Println(os.Args[1])
 	config.InitializeConfiguration(os.Args[1])
 
 	setupRoutes()

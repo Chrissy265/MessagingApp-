@@ -39,9 +39,7 @@ func GetUserContacts(userId int64) ([]model.Contact, error) {
 
 	for _, chat := range chats {
 		for _, chatUsers := range chat.Users {
-			fmt.Println(chatUsers.UserID)
 			for i, user := range usersContacts {
-				fmt.Println(user.Contact.UserID)
 				if chatUsers.UserID == user.Contact.UserID {
 					usersContacts[i].ChatId = chat.ID
 					break
