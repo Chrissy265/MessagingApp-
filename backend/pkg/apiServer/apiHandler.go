@@ -47,12 +47,14 @@ func createNewUserChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	id, _ := repository.CreateNewUserChat(ids.Ids)
+	users := []int64{ids.Id1, ids.Id2}
+	id, _ := repository.CreateNewUserChat(users)
 	json.NewEncoder(w).Encode(id)
 }
 
 type NewChat struct {
-	Ids []int64
+	Id1 int64
+	Id2 int64
 }
 
 func deleteUserChat(w http.ResponseWriter, r *http.Request) {
