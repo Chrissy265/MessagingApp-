@@ -41,7 +41,6 @@ var docCookies = {
     }
     var sExpires = "";
     if (vEnd) {
-      alert("vend");
       switch (vEnd.constructor) {
         case Number:
           sExpires =

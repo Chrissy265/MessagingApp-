@@ -44,7 +44,7 @@
                 <button type="button" id="sidebarCollapse" class="btn"><i class="fas fa-bars" aria-hidden="true"></i></button>
                 <h4 class="nav navbar-nav navbar-center">Contacts</h4>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><button type="button" class="btn btn-primary" onclick="logout()">Log Out</button></li>
+                    <li><button type="button" class="btn btn-primary" onclick="signout()">Log Out</button></li>
                 </ul>
             </div>
         </nav>
@@ -98,8 +98,7 @@
 
         function populateContactList() {
             //default = 3
-            var currentUserId = 3;
-
+            var currentUserId = docCookies.getItem("userid");
             var urlStr = 'http://localhost:8080/user/' + currentUserId + '/contacts';
             $.ajax({
                 type: 'get',
@@ -129,7 +128,7 @@
         }
 
         function searchContacts() {
-            var currentUserId = 3;
+            var currentUserId = docCookies.getItem("userid");
             var searchStr = document.getElementById('contactSearch').value;
             var urlStr = "http://localhost:8080/contacts/search/user/" + currentUserId + "?search=" + searchStr;
             $.ajax({
@@ -152,7 +151,7 @@
         }
 
         function addContact(id, value) {
-            var currentUserId = 3;
+            var currentUserId = docCookies.getItem("userid");
             var urlStr = "http://localhost:8080/user/" + currentUserId + "/contact/" + value;
             $.ajax({
                 type: 'post',
@@ -174,6 +173,22 @@
           loggedin();
           populateContactList();
       }
+
+      function signout() {
+  docCookies.removeItem("userid");
+  window.location.href = "login.html";
+}
+
+function loggedin() {
+  //if no user is logged in and they are trying to access a page other than the login page,
+  //send them to the login page
+  if (
+    docCookies.getItem("userid") == null &&
+    window.location.href.indexOf("login.html") == -1
+  ) {
+    window.location.href = "login.html";
+  }
+}
     </script>
 
 </body>

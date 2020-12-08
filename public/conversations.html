@@ -78,15 +78,15 @@ $(document).ready(function () {
     });
 
     function populateConversationList() {
+        var currentId = docCookies.getItem("userid");
+        var urlStr = "http://localhost:8080/chats/user/" + currentId;
         $.ajax({
             type: 'get',
-            url: 'http://localhost:8080/chats/user/1',
+            url: urlStr,
             data: {},
             success: function(result) {
-                alert(result);
                 var res = JSON.parse(result);
                 for(var i=0; i<res.length; i++){
-                alert(res[i].Users[1].DisplayName);
                 var htmlStr = "";
                 htmlStr += '<a href="chat.html?userId=' + res[i].Users[1].UserID;
                 htmlStr += '&displayName=' + res[i].Users[1].DisplayName;
@@ -104,9 +104,24 @@ $(document).ready(function () {
 
   function startup() {
       loggedin();
-      alert(docCookies.getItem("userId"));
       populateConversationList();
   }
+
+  function signout() {
+  docCookies.removeItem("userid");
+  window.location.href = "login.html";
+  }
+
+  function loggedin() {
+  //if no user is logged in and they are trying to access a page other than the login page,
+  //send them to the login page
+  if (
+    docCookies.getItem("userid") == null &&
+    window.location.href.indexOf("login.html") == -1
+  ) {
+    window.location.href = "login.html";
+  }
+}
 </script>
 
 </body>

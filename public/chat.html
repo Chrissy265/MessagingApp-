@@ -77,6 +77,8 @@ $(document).ready(function () {
         });
     });
 
+    var messages = [];
+
     function startup() {
       loggedin();
       const queryString = window.location.search;
@@ -87,7 +89,12 @@ $(document).ready(function () {
 
       var headerStr = "Conversation with " + otherUserName;
       document.getElementById("pageHeader").innerHTML = headerStr;
-      populateMessages(otherUserId);
+      populateMessages(otherUserId, true);
+
+      setInterval(function(){
+        populateMessages(otherUserId, false)
+      }, 3000);
+
     }
 
     document.getElementById('newMessageTextBox').onkeydown = function(event) {
@@ -96,13 +103,12 @@ $(document).ready(function () {
       }
     }
 
-    function populateMessages(userId){
+    function populateMessages(userId, init){
       if (chatId != -1){
         //if the chat id exists, conversation was already started
         //assume we're user 3
-        var currentUserId = 6;
+        var currentUserId = docCookies.getItem("userid");
         var urlStr = 'http://localhost:8080/chat/' + chatId + '/messages';
-        console.log(urlStr);
         $.ajax({
           type: 'get',
           url: urlStr,
@@ -111,17 +117,34 @@ $(document).ready(function () {
             var res = JSON.parse(result);
             if (null != res){
               for(var i=0; i<res.length; i++){
-                //if the user id is the other person, incoming message
-                var htmlStr = "";
-                if (res[i].UserId == userId){
-                  var str = formatIncomingMessage(res[i].Message, res[i].CreatedTime*1000);
-                  $('#message_history').prepend(str);
+                const found = messages.some(el => el === res[i].MessageId);
+                if(!found){
+                  //if the user id is the other person, incoming message
+                  var htmlStr = "";
+                  if (res[i].UserId == userId){
+                    var str = formatIncomingMessage(res[i].Message, res[i].CreatedTime*1000);
+                    
+                    if (init) {
+                      $('#message_history').prepend(str);
+                    }
+                    else{
+                      $('#message_history').append(str);
+                    }
+                  }
+                  //if user id is current user, outgoing message
+                  else{
+                    var str = formatOutgoingMessage(res[i].Message, res[i].CreatedTime*1000);
+                    
+                    if (init) {
+                      $('#message_history').prepend(str);
+                    }
+                    else{
+                      $('#message_history').append(str);
+                    }
+                  }
+                  messages.push(res[i].MessageId);
                 }
-                //if user id is current user, outgoing message
-                else{
-                  var str = formatOutgoingMessage(res[i].Message, res[i].CreatedTime*1000);
-                  $('#message_history').prepend(str);
-                }
+
               }
             }
           }
@@ -129,12 +152,16 @@ $(document).ready(function () {
       }
       else {
         var urlStr = 'http://localhost:8080/chat';
-        var currentUserId = 3;
+        var currentUserId = docCookies.getItem("userid");
+
+        alert(JSON.stringify(
+            {Id1: parseInt(currentUserId), 
+             Id2: parseInt(userId)}));
         $.ajax({
           type: 'POST',
           url: urlStr,
           data: JSON.stringify(
-            {Id1: currentUserId, 
+            {Id1: parseInt(currentUserId), 
              Id2: parseInt(userId)}),
           success: function(result) {
             var urlstuff = "chat.html?userId=" + otherUserId + "&displayName=" + otherUserName + "&chatId=" + result;
@@ -150,8 +177,7 @@ $(document).ready(function () {
     }
 
     function sendMessage(){
-      //assume we're user 3
-      var currentUserId = 3;
+      var currentUserId = docCookies.getItem("userid");
       var msg = document.getElementById("newMessageTextBox").value;
 
       var urlStr = 'http://localhost:8080/chat/' + chatId + '/user/' + currentUserId + '/message';
@@ -161,7 +187,7 @@ $(document).ready(function () {
         data: JSON.stringify({ Message : msg }),
         success: function(result) {
           var str = formatOutgoingMessage(msg, new Date(Date.now()));
-          $('#message_history').append(str);
+          
           document.getElementById("newMessageTextBox").value = "";
         },
         error: function(data){
@@ -190,6 +216,23 @@ $(document).ready(function () {
       htmlStr += '</div></div>'
       return htmlStr;
     }
+
+    function signout() {
+  docCookies.removeItem("userid");
+  window.location.href = "login.html";
+}
+
+function loggedin() {
+  //if no user is logged in and they are trying to access a page other than the login page,
+  //send them to the login page
+  if (
+    docCookies.getItem("userid") == null &&
+    window.location.href.indexOf("login.html") == -1
+  ) {
+    window.location.href = "login.html";
+  }
+}
+
 </script>
 
 </body>
