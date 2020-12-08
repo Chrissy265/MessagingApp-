@@ -14,14 +14,12 @@ var EnvironmentConfiguration Config
 type Config struct {
 	Connection struct {
 		MySQL string
-		Redis string
 	}
 }
 
 func InitializeConfiguration(filename string) {
 
 	readFile(filename)
-	fmt.Printf("%+v", EnvironmentConfiguration)
 }
 
 func processError(err error) {

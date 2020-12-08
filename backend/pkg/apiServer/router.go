@@ -18,6 +18,7 @@ func SetRoutes(myRouter *mux.Router) {
 	myRouter.HandleFunc("/contacts/search/user/{id}", searchContact).Methods("GET")
 	myRouter.HandleFunc("/user/{userid}/contact/{contactid}", deleteContact).Methods("DELETE")
 	myRouter.HandleFunc("/user/{userid}/contact/{contactid}", addNewContact).Methods("POST")
+	myRouter.HandleFunc("/chat/{chatid}/user/{userid}/message", createNewMessage).Methods("POST")
 
 	myRouter.HandleFunc("/user", addNewUser).Methods("POST")
 }

@@ -224,8 +224,61 @@ func addNewUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(id)
 }
 
+func createNewMessage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	var message MessageInput
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.Unmarshal(body, &message)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	vars := mux.Vars(r)
+	chatID, err := strconv.ParseInt(vars["chatid"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	userID, err := strconv.ParseInt(vars["userid"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	id, createdat, err := repository.CreateNewMessage(chatID, userID, message.Message)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	newMessage := NewMessage{
+		MessageId: id,
+		CreatedAt: createdat,
+	}
+	json.NewEncoder(w).Encode(newMessage)
+
+}
+
 type NewUser struct {
 	DisplayName string
 	ClientId    string
 	Email       string
+}
+
+type MessageInput struct {
+	Message string
+}
+
+type NewMessage struct {
+	MessageId int64
+	CreatedAt string
 }

@@ -221,31 +221,3 @@ func CreateNewMessage(chatId int64, userId int64, message string) (int64, string
 
 	return id, createdTime, err
 }
-
-func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, error) {
-	var sqlQuery = "SELECT idUser from userchatpreferences where idChat = ? and not idUser = ?"
-	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
-	defer closeStmt(stmt)
-	ids := []int64{}
-
-	if err != nil {
-		return ids, err
-	}
-
-	res, err := stmt.Query(chatId, messageSenderId)
-	defer closeRows(res)
-	if err != nil {
-		return ids, err
-	}
-
-	for res.Next() {
-		var userId int64
-		err := res.Scan(&userId)
-		if err != nil {
-			return ids, err
-		}
-		ids = append(ids, userId)
-	}
-	fmt.Println(ids)
-	return ids, nil
-}

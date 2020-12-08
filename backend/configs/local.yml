@@ -1,3 +1,2 @@
 connection:
   mysql: human:mysql@(db:3306)/mydb
-  redis: redis:6379
