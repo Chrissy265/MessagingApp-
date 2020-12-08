@@ -65,4 +65,25 @@ yellow keys are primary keys
 
 ## Sequence Diagram
 
-![](SequenceDiagram.PNG?raw=true)
+![](SequenceDiagram.PNG?raw=true)  
+
+Login Page: 
+The user go on the web application Messaging app. The user have to login using their username and password or use Google OAuth sign in. If the user sign in with their Google crendentials email and password.  The Google OAuth login goes through the Go Lang server, if successful then return authorization code if success. The Go Lang server will request token to the Google API authenication then request user data.  
+
+Create New User: 
+
+Successful login will create a new user in the database, then it will return the user id from the table. 
+Every user that is in the messaging app will be assigned a user id which will track each messages. 
+
+Conversation Page: 
+
+The chat page will render after a successful login and you are establish user with a user ID. The current user can add a contact for another user.  User #2 can access the web app and repeat the same process, login and get assign a user id.  User #1 now can add User #2 through the contact page. Both users now can send messages to each other. The messages are sent through the Go Lang server, saves the message then store in the MySQL database. User #2 will be able to render the new messages and respond to those messages through the web app. The messages will be retrieved from the MySQL database. 
+
+
+
+
+ 
+
+
+
+
