@@ -87,17 +87,14 @@ $(document).ready(function () {
             success: function(result) {
                 var res = JSON.parse(result);
                 for(var i=0; i<res.length; i++){
-                    alert(result);
                 var otherId = -1;
                 var str = parseInt(res[i].Users[1].UserID);
                 var curr = parseInt(docCookies.getItem("userid"));
                 var userIdForChat = -1;
                 var userNameForChat = "";
                 if (str == curr){
-                    alert(parseInt(res[i].Users[0].UserID));
                     userIdForChat = parseInt(res[i].Users[0].UserID);
                     userNameForChat = res[i].Users[0].DisplayName;
-                    alert(userNameForChat);
                 }
                 else{
                     userIdForChat = str;

@@ -158,9 +158,6 @@ $(document).ready(function () {
         var urlStr = 'http://localhost:8080/chat';
         var currentUserId = docCookies.getItem("userid");
 
-        alert(JSON.stringify(
-            {Id1: parseInt(currentUserId), 
-             Id2: parseInt(userId)}));
         $.ajax({
           type: 'POST',
           url: urlStr,
