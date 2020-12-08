@@ -33,19 +33,26 @@ func returnAllUserChats(w http.ResponseWriter, r *http.Request) {
 func createNewUserChat(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	var userIds []int64
+
+	var ids NewChat
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = json.Unmarshal(body, &userIds)
+
+	err = json.Unmarshal(body, &ids)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	repository.CreateNewUserChat(userIds)
+	id, _ := repository.CreateNewUserChat(ids.Ids)
+	json.NewEncoder(w).Encode(id)
+}
+
+type NewChat struct {
+	Ids []int64
 }
 
 func deleteUserChat(w http.ResponseWriter, r *http.Request) {

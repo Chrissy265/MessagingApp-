@@ -15,7 +15,6 @@ func ReturnAllUserChats(userID int64) ([]model.Chat, error) {
 		"inner join (SELECT idChat, max(idMessages0) lastMessageSentInChat from messages0 group by idChat) n on n.idChat = chat.idChat " +
 		"where chat.idChat in (Select idChat from userchatpreferences where idUser = ?) " +
 		"order by lastMessageSentInChat desc"
-	fmt.Println("asdfa")
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	var chats []model.Chat
@@ -67,51 +66,51 @@ func ReturnAllUserChats(userID int64) ([]model.Chat, error) {
 	return chats, err
 }
 
-func CreateNewUserChat(users []int64) error {
+func CreateNewUserChat(users []int64) (int64, error) {
 	var sqlQueryCreateChat = "INSERT into chat (messageTable) VALUES(0)"
 	var sqlQueryCreatePreferences = "INSERT into userchatpreferences (idChat, idUser) VALUES(?,?)"
 
 	tx, err := mysql.GetMySQLConnection().Begin()
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	//intert new chat
 	stmt, err := tx.Prepare(sqlQueryCreateChat)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	defer stmt.Close()
 
 	res, err := stmt.Exec()
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	//get new chat id
 	id, _ := res.LastInsertId()
-	fmt.Println(id)
 
 	//insert user chat preferences for all users in chat
 	stmt2, err := tx.Prepare(sqlQueryCreatePreferences)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return -1, err
 	}
 	defer stmt2.Close()
 
 	for _, user := range users {
 		if _, err := stmt2.Exec(id, user); err != nil {
 			tx.Rollback()
-			return err
+			return -1, err
 		}
 	}
-	return tx.Commit()
+
+	return id, tx.Commit()
 }
 
 func GetRecentMesages(chatID int64) ([]model.Message, error) {
-	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM messages0 where idChat = ? order by createdTime desc, idMessages0 desc limit 50"
+	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM messages0 where idChat = ? order by createdTime, idMessages0 limit 50"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	messages := []model.Message{}
@@ -168,33 +167,58 @@ func getRecentMesages(res *sql.Rows, messages []model.Message) ([]model.Message,
 	return messages, nil
 }
 
-func CreateNewMessage(chatId int64, userId int64, message string) (int64, error) {
+func CreateNewMessage(chatId int64, userId int64, message string) (int64, string, error) {
 	var sqlQuery = "INSERT into messages0 (idChat, idSentByUser, message) VALUES(?,?,?)"
-	fmt.Println("hi")
 	tx, err := mysql.GetMySQLConnection().Begin()
 	if err != nil {
-		return -1, err
+		return -1, "", err
 	}
 
 	//intert new chat
 	stmt, err := tx.Prepare(sqlQuery)
 	if err != nil {
 		tx.Rollback()
-		return -1, err
+		return -1, "", err
 	}
 	defer stmt.Close()
 	res, err := stmt.Exec(chatId, userId, message)
-	fmt.Println("hi")
 	if err != nil {
-		fmt.Println("hi")
 		fmt.Println(err)
 		tx.Rollback()
-		return -1, err
+		return -1, "", err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return -1, "", err
 	}
 	//get new chat id
 	id, _ := res.LastInsertId()
 
-	return id, tx.Commit()
+	var sqlQuery1 = "SELECT createdTime FROM messages0 where idMessages0 = ?"
+	stmt1, err := mysql.GetMySQLConnection().Prepare(sqlQuery1)
+	defer closeStmt(stmt1)
+
+	if err != nil {
+		return -1, "", err
+	}
+	res1, err := stmt1.Query(id)
+	defer closeRows(res1)
+	if err != nil {
+		return -1, "", err
+	}
+
+	var createdTime string
+	if res1.Next() {
+
+		err := res1.Scan(&createdTime)
+		fmt.Println(createdTime)
+		if err != nil {
+			return -1, createdTime, err
+		}
+	}
+
+	return id, createdTime, err
 }
 
 func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, error) {
@@ -220,7 +244,6 @@ func GetUsersToSendMessageTo(chatId int64, messageSenderId int64) ([]int64, erro
 			return ids, err
 		}
 		ids = append(ids, userId)
-
 	}
 	fmt.Println(ids)
 	return ids, nil
