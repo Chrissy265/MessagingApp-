@@ -2,7 +2,7 @@
   <html lang="en" class="gr__ec2-18-207-195-213_compute-1_amazonaws_com"><head>
     <meta charset="utf-8">
     <meta name="google-sign-scope" content="profile email"> 
-    <meta name = "google-signin-client_id" content="554480865489-mpecttf28bqqeadcljice720gge4ao1v.apps.googleusercontent.com"
+    <meta name = "google-signin-client_id" content="554480865489-mpecttf28bqqeadcljice720gge4ao1v.apps.googleusercontent.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
     <script src="https://apis.google.com/js/platform.js" async defer> </script>
@@ -23,71 +23,48 @@
 
 </head>
 
-  
-  
-
 <body> 
   <div class="g=signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
-  <button> Sign In With Google</button>   
-
-
-  <script src="docCookies.js"> 
+  <button onclick="simpleLogin()"> Sign In With Google</button> 
   
+  <script language="javascript">
+
+    function simpleLogin() {
+      var userId = 3;
+      
+      docCookies.setItem("userid", userId);
+      alert(docCookies.getItem("userid"));
+      //window.location.href = "conversations.html";
+    }
+
     function onSignIn(userGoogle) { 
 
-      clientID = "554480865489-mpecttf28bqqeadcljice720gge4ao1v.apps.googleusercontent.com" 
-      token_uri = "https://oauth2.googleapis.com/token" 
-      clientSecret ="1OZVtrYEmt3BcmLcwwfO6TYF"
+        clientID = "554480865489-mpecttf28bqqeadcljice720gge4ao1v.apps.googleusercontent.com" 
+        token_uri = "https://oauth2.googleapis.com/token" 
+        clientSecret ="1OZVtrYEmt3BcmLcwwfO6TYF"
 
+        var profile=userGoogle.getBasicProfile(); 
 
-      var profile=userGoogle.getBasicProfile(); 
+        if(obj.message != "success")
+        {
+          alert("Google login Failed. Please Try Again");
+        } 
+        else {
+          if(obj.message == "success") {
+            
+        docCookies.setItem('email',email); 
+        docCookies.setItem("clientID", clientID); 
+        docCookies.setItem('userImage' + profile.getImageURL());
+        docCookies.setItem('token_uri', token_uri);   
+        docCookies.setItem('clientSecret');
+        docCookies.setItem('userId', userId); 
 
-      if(obj.message != "success")
-      {
-        alert("Google login Failed. Please Try Again");
-      } 
-      else {
-        if(obj.message == "success") {
-          
-      docCookies.setItem('email',email); 
-      docCookies.setItem("clientID", clientID) 
-      docCookies.setItem('userImage' + profile.getImageURL())
-      docCookies.setItem('token_uri', token_uri)   
-      docCookies.setItem('clientSecret')
-      docCookies.setItem('userId', userId) 
+        var homePage = "conversations.html?id=" + userId;
 
-      
-      window.location.pathname ="./src/convesations.html" 
+        window.location.href = homePage;
         }
       }
-  
-
-        
-    
     }
   </script>  
-
-
-
-<a href = "/conversations.html" onclick="signOut();">Sign out</a>
-<script> 
-   function signOut() {
-      var auth2 =gapi.auth2.getAuthInstance(); 
-      auth2.signOut().then(function(){
-        console.log('User signed out.');
-      });
-   } 
-  </script>
- 
- 
-
-
-
-}
-
-
-
-
-
 </body>
 </html>

@@ -16,9 +16,10 @@
     <!-- Font Awesome JS -->
     <script src="https://kit.fontawesome.com/412b07d0f6.js" crossorigin="anonymous"></script><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
     <script src="docCookies.js"></script>
+    <script src="script.js"></script>
 </head>
 
-<body data-gr-c-s-loaded="true">
+<body data-gr-c-s-loaded="true" onload="startup()">
 <div class="wrapper">
 
     <!-- Sidebar  -->
@@ -29,7 +30,6 @@
             <ul class="list-unstyled components">
                 <li><a href="conversations.html"><i class="far fa-comments" aria-hidden="true"></i> Conversations</a></li>
                 <li class="active"><a href="#"><i class="far fa-address-book" aria-hidden="true"></i>  Contacts</a></li>
-                <li><a href="myprofile.html"><i class="far fa-user-circle" aria-hidden="true"></i>  Profile</a></li>
             </ul>
 
         </nav>
@@ -52,11 +52,28 @@
 <!-- Individual Page Content Goes Here -->
 
         <div id="invoices" class="card mx-auto">
+            <div class="card-header">
+                <h4 class="card-title text-center">My Contacts</h4>
+            </div>
             <div class="card-body">
-                <input id="contactSearch" class="form-control" type="text" placeholder="Search Contacts...">
+                <!-- List of Contacts -->
+                <div id="contactList" class="list-group">
+
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div id="searchContactsCard" class="card mx-auto">
+            <div class="card-header">
+                <h4 class="card-title text-center">Search for New Contacts</h4>
+            </div>
+            <div class="card-body">
+                <input id="contactSearch" class="form-control" type="text" placeholder="Search...">
                 <br>
                 <!-- List of Invoices -->
-                <div id="contactList" class="list-group">
+                <div id="newContactsList" class="list-group">
 
                 </div>
             </div>
@@ -64,5 +81,100 @@
 
     </div>
 </div>
+
+<script type="text/javascript">
+    // Collapse/Open Sidebar
+    $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active')
+            });
+        });
+    
+    document.getElementById('contactSearch').onkeydown = function(event) {
+      if (event.keyCode == 13) {
+        searchContacts();
+      }
+    }
+
+        function populateContactList() {
+            //default = 3
+            var currentUserId = 3;
+
+            var urlStr = 'http://localhost:8080/user/' + currentUserId + '/contacts';
+            $.ajax({
+                type: 'get',
+                url: urlStr,
+                data: {},
+                success: function(result) {
+                    var res = JSON.parse(result);
+                    for(var i=0; i<res.length; i++){
+                        var htmlStr = populateContactRow(res[i].Contact.UserID, res[i].Contact.DisplayName, res[i].ChatId);
+                        $('#contactList').append(htmlStr);
+                    }
+                }
+            })
+        }
+
+        function populateContactRow(userId, displayName, chatId) {
+            var htmlStr = "";
+            htmlStr += '<a href="chat.html?userId=' + userId;
+            htmlStr += '&displayName=' + displayName;
+            htmlStr += '&chatId=' + chatId;
+            htmlStr += '" class="list-group-item list-group-item-action flex-column align-items-start">';
+            htmlStr += '<div id="conversationRow" class="d-flex">';
+            htmlStr += '<div id="fullMessageInfo"';
+            htmlStr += '<h5>' + displayName + '</h5>';
+            htmlStr += '</div></div></a>';
+            return htmlStr;
+        }
+
+        function searchContacts() {
+            var currentUserId = 3;
+            var searchStr = document.getElementById('contactSearch').value;
+            var urlStr = "http://localhost:8080/contacts/search/user/" + currentUserId + "?search=" + searchStr;
+            $.ajax({
+                type: 'get',
+                url: urlStr,
+                data: {},
+                success: function(result) {
+                    var res = JSON.parse(result);
+                    for(var i=0; i<res.length; i++){
+                        var htmlStr = "";
+                        htmlStr += '<button type="button" class="list-group-item ';
+                        htmlStr += 'list-group-item-action" data-toggle="modal" ';
+                        htmlStr += 'onclick="addContact(this.id, this.value)" value="' + res[i].UserID + '" id="newContact' + res[i].UserID + '">';
+                        htmlStr += res[i].DisplayName + '</button>';
+
+                        $('#newContactsList').append(htmlStr);
+                    }
+                }
+            })
+        }
+
+        function addContact(id, value) {
+            var currentUserId = 3;
+            var urlStr = "http://localhost:8080/user/" + currentUserId + "/contact/" + value;
+            $.ajax({
+                type: 'post',
+                url: urlStr,
+                data: {},
+                success: function(result) {
+                    $('#contactList').empty();
+                    document.getElementById(id).remove();
+                    populateContactList();
+                    document.getElementById("contactSearch").value = "";
+                },
+                error: function(err) {
+                    alert(JSON.stringify(err));
+                }
+            })
+        }
+    
+      function startup() {
+          loggedin();
+          populateContactList();
+      }
+    </script>
+
 </body>
 </html>
