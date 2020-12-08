@@ -67,7 +67,7 @@ Messaging App Boostrap Application (ideally would be deployed on S3 in AWS):
 The messaging app application consist of three pages, we use boostrap for the design of the UI.
 The application consist of HTML and JavaScript.  
 
-Server: Go Lang (ideally would be deployed on Elastic Beanstalk for (EC2 with auto scaling and other management)): 
+Server: Go Lang (ideally would be deployed on Elastic Beanstalk (EC2 with auto scaling and other management)): 
 The server handles the logic of the application. The backend is constructed using go lang. 
 
 Database (AWS RDS MySQL server): 
