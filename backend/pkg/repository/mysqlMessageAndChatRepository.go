@@ -110,7 +110,8 @@ func CreateNewUserChat(users []int64) (int64, error) {
 }
 
 func GetRecentMesages(chatID int64) ([]model.Message, error) {
-	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM messages0 where idChat = ? order by createdTime, idMessages0 limit 50"
+	var sqlQuery = "SELECT idMessages0, idSentByUser, message, UNIX_TIMESTAMP(createdTime) FROM messages0 where idChat = ? order by createdTime desc, idMessages0 desc limit 50"
+
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	messages := []model.Message{}
@@ -127,7 +128,7 @@ func GetRecentMesages(chatID int64) ([]model.Message, error) {
 }
 
 func GetRecentMesagesBefore(chatID int64, messageId int64) ([]model.Message, error) {
-	var sqlQuery = "SELECT idMessages0, idSentByUser, message, createdTime FROM mydb.messages0 where idChat = ? AND createdTime <= (Select createdTime from mydb.messages0 where idMessages0 = ? limit 1) AND idMessages0 < ? order by createdTime desc, idMessages0 desc limit 50"
+	var sqlQuery = "SELECT idMessages0, idSentByUser, message, UNIX_TIMESTAMP(createdTime) FROM mydb.messages0 where idChat = ? AND createdTime <= (Select createdTime from mydb.messages0 where idMessages0 = ? limit 1) AND idMessages0 < ? order by createdTime desc, idMessages0 desc limit 50"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	messages := []model.Message{}
