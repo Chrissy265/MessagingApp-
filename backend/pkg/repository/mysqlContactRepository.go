@@ -7,32 +7,56 @@ import (
 	"realtime-chat-go-react/pkg/model"
 )
 
-func GetUserContacts(userId int64) ([]model.User, error) {
+func GetUserContacts(userId int64) ([]model.Contact, error) {
 	var sqlQuery = "select u.idUser, displayName, google_id " +
-		"from db.usercontacts uc " +
-		"join db.user u on u.idUser = uc.IdContact " +
-		"join db.userpreferences up on up.idUser = uc.IdContact " +
+		"from usercontacts uc " +
+		"join user u on u.idUser = uc.IdContact " +
+		"join userpreferences up on up.idUser = uc.IdContact " +
 		"where uc.idUser = ?"
 	stmt, err := mysql.GetMySQLConnection().Prepare(sqlQuery)
 	defer closeStmt(stmt)
 	users := []model.User{}
-
+	usersContacts := []model.Contact{}
 	if err != nil {
-		return users, err
+		return usersContacts, err
 	}
 
 	res, err := stmt.Query(userId)
 	defer closeRows(res)
 	if err != nil {
-		return users, err
+		return usersContacts, err
 	}
-	return getUsers(res, users)
+	userarray, _ := getUsers(res, users)
+	chats, _ := ReturnAllUserChats(userId)
+
+	for _, u := range userarray {
+		contact := model.Contact{
+			ChatId:  -1,
+			Contact: u,
+		}
+		usersContacts = append(usersContacts, contact)
+	}
+
+	for _, chat := range chats {
+		for _, chatUsers := range chat.Users {
+			fmt.Println(chatUsers.UserID)
+			for i, user := range usersContacts {
+				fmt.Println(user.Contact.UserID)
+				if chatUsers.UserID == user.Contact.UserID {
+					usersContacts[i].ChatId = chat.ID
+					break
+				}
+			}
+		}
+	}
+
+	return usersContacts, err
 }
 
 func SearchContact(search string, userID int64) ([]model.User, error) {
 	var sqlQuery = "select u.idUser, displayName, google_id " +
-		"from db.user u " +
-		"join db.userpreferences up on up.idUser = u.idUser " +
+		"from user u " +
+		"join userpreferences up on up.idUser = u.idUser " +
 		"where (UPPER(up.displayName) like UPPER(?) || UPPER(u.email) like UPPER(?)) " +
 		"AND not u.idUser = ? " +
 		"AND (select iduserContacts from usercontacts where idUser = ? and idContact = u.idUser) is null "
@@ -46,7 +70,6 @@ func SearchContact(search string, userID int64) ([]model.User, error) {
 	}
 
 	search = "%" + search + "%"
-	fmt.Println(search)
 	res, err := stmt.Query(search, search, userID, userID)
 	defer closeRows(res)
 	if err != nil {
