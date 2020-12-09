@@ -135,4 +135,4 @@ Conversation Page:
 The chat page will render after a successful login and you are establish user with a user ID. The current user can add a contact for another user.  User #2 can access the web app and repeat the same process, login and get assign a user id.  User #1 now can add User #2 through the contact page. Both users now can send messages to each other. The messages are sent through the Go Lang server, saves the message then store in the MySQL database. User #2 will be able to render the new messages and respond to those messages through the web app. The messages will be retrieved from the MySQL database. 
 
 ## User Table
-![alt text](https://github.com/Chrissy265/MessagingApp-/blob/main/user table.png?raw=true)
+![](users.PNG?raw=true)
