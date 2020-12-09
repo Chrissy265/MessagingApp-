@@ -128,9 +128,11 @@ Need to open two seperate browsers windows open to simulate two seperate users.
 
 Create New User: 
 
-Successful login will create a new user in the database, then it will return the user id from the table. 
-Every user that is in the messaging app will be assigned a user id which will track each messages. 
+The intention was to have a user created upon initial login via Google Auth. However, since we were unable to implement Google Auth, this is not a feature and unfortunately, there is no system in place to create a new user except to put it in the database directly.
 
 Conversation Page: 
 
 The chat page will render after a successful login and you are establish user with a user ID. The current user can add a contact for another user.  User #2 can access the web app and repeat the same process, login and get assign a user id.  User #1 now can add User #2 through the contact page. Both users now can send messages to each other. The messages are sent through the Go Lang server, saves the message then store in the MySQL database. User #2 will be able to render the new messages and respond to those messages through the web app. The messages will be retrieved from the MySQL database. 
+
+## User Table
+![alt text](https://github.com/Chrissy265/MessagingApp-/blob/main/user table.png?raw=true)
